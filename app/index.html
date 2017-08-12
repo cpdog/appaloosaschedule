@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>untitled5</title>
+
+    <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
+    <link href="http://www.appaloosafestival.com/dist/toolkit-bold.min.css" rel="stylesheet">
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="/bower_components/sweetalert/dist/sweetalert.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+
+    <style>
+      [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+        display: none !important;
+      }
+
+      .cssload-loader{
+        display:block;
+        position:absolute;
+        height:6em;width:6em;
+        left:50%;
+        margin-top:-3em;
+        margin-left:-3em;
+        background-color:rgb(51,136,153);
+        border-radius:3.5em 3.5em 3.5em 3.5em;
+        -o-border-radius:3.5em 3.5em 3.5em 3.5em;
+        -ms-border-radius:3.5em 3.5em 3.5em 3.5em;
+        -webkit-border-radius:3.5em 3.5em 3.5em 3.5em;
+        -moz-border-radius:3.5em 3.5em 3.5em 3.5em;
+        box-shadow:inset 0 0 0 0.5em rgb(236,234,224);
+        -o-box-shadow:inset 0 0 0 0.5em rgb(236,234,224);
+        -ms-box-shadow:inset 0 0 0 0.5em rgb(236,234,224);
+        -webkit-box-shadow:inset 0 0 0 0.5em rgb(236,234,224);
+        -moz-box-shadow:inset 0 0 0 0.5em rgb(236,234,224);
+        background: linear-gradient(-45deg, rgb(0,153,0), rgb(0,153,0) 50%, rgb(204,204,0) 50%, rgb(204,204,0));
+        background: -o-linear-gradient(-45deg, rgb(0,153,0), rgb(0,153,0) 50%, rgb(204,204,0) 50%, rgb(204,204,0));
+        background: -ms-linear-gradient(-45deg, rgb(0,153,0), rgb(0,153,0) 50%, rgb(204,204,0) 50%, rgb(204,204,0));
+        background: -webkit-linear-gradient(-45deg, rgb(0,153,0), rgb(0,153,0) 50%, rgb(204,204,0) 50%, rgb(204,204,0));
+        background: -moz-linear-gradient(-45deg, rgb(0,153,0), rgb(0,153,0) 50%, rgb(204,204,0) 50%, rgb(204,204,0));
+        background-blend-mode: multiply;
+        border-top:8px solid rgb(0,153,0);
+        border-left:8px solid rgb(0,153,0);
+        border-bottom:8px solid rgb(204,204,0);
+        border-right:8px solid rgb(204,204,0);
+        animation:cssload-roto 1.15s infinite linear;
+        -o-animation:cssload-roto 1.15s infinite linear;
+        -ms-animation:cssload-roto 1.15s infinite linear;
+        -webkit-animation:cssload-roto 1.15s infinite linear;
+        -moz-animation:cssload-roto 1.15s infinite linear;
+      }
+
+
+      @keyframes cssload-roto {
+        0%{transform:rotateZ(0deg);}
+        100%{transform:rotateZ(360deg);}
+      }
+
+      @-o-keyframes cssload-roto {
+        0%{-o-transform:rotateZ(0deg);}
+        100%{-o-transform:rotateZ(360deg);}
+      }
+
+      @-ms-keyframes cssload-roto {
+        0%{-ms-transform:rotateZ(0deg);}
+        100%{-ms-transform:rotateZ(360deg);}
+      }
+
+      @-webkit-keyframes cssload-roto {
+        0%{-webkit-transform:rotateZ(0deg);}
+        100%{-webkit-transform:rotateZ(360deg);}
+      }
+
+      @-moz-keyframes cssload-roto {
+        0%{-moz-transform:rotateZ(0deg);}
+        100%{-moz-transform:rotateZ(360deg);}
+      }
+
+      .sweet-alert h2{
+        font-size:18px;
+      }
+
+      .sweet-alert p{
+        font-size:14px;
+      }
+    </style>
+
+  </head>
+  <body>
+
+
+
+  <div ng-app="schedule">
+    <div ng-controller="mainViewCtrl as vm">
+      <div id="spinner" style="position:fixed; top:50%; left:50%" ng-hide="vm.allEvents.length > 0">
+        <div class="cssload-loader"></div>
+      </div>
+      <div class="ng-cloak" class="container-fluid">
+
+        <div class="row">
+          <a href="/"><i class="fa fa-2x fa-home text-primary"></i> Main Site</a>
+        </div>
+
+        <div class="row">
+
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+            <select class="form-control filter-control" ng-model="vm.FilterStage">
+              <option value="">All Stages</option>
+              <option ng-repeat="option in vm.allEvents | unique: 'Where' | orderBy : vm.StageOrder" value="{{option.Where}}">{{option.Where}}</option>
+            </select>
+          </div>
+
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+            <select class="form-control filter-control" ng-model="vm.selectedDay">
+              <option value="9/3/2016" selected="selected">Sat. 9/3</option>
+              <option value="9/4/2016">Sun. 9/4</option>
+            </select>
+          </div>
+
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+            <select class="form-control filter-control" ng-model="vm.ShowMyScheduleOnly">
+              <option value = "false">All Scheduled</option>
+              <option value = "true">My Scheduled</option>
+            </select>
+          </div>
+
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+            <select class="form-control filter-control" ng-model="vm.ShowAnyTimeEvents">
+              <option value = "true">All Times</option>
+              <option value = "false">Upcoming</option>
+            </select>
+          </div>
+
+          <div class="col-xs-12 ">
+            <select class="form-control filter-control" ng-model="vm.selectedBand">
+              <option value="">All Artists &amp; Events</option>
+              <option ng-repeat="option in vm.allEvents | unique: 'Artist || Event' | orderBy : 'Artist || Event'" value="{{option.Artist || option.Event}}">{{option.Artist || option.Event}}</option>
+              </option>
+            </select>
+          </div>
+
+        </div>
+
+        <hr>
+
+        <div ng-repeat="group  in vm.sched()  | groupBy: 'StartTime' | toArray:true | orderBy: '$key' track by $index ">
+          <div class="panel panel-primary" style="border:none">
+            <div class="panel-heading">
+              <span class=" panel-title">{{::group.$key | amDateFormat:'h:mma' }}</span>
+            </div>
+
+            <ul class="list-group" ng-repeat="evt in group | orderBy: vm.StageOrder">
+              <li class="list-group-item">
+                <div class="row" >
+
+                  <div class="col-xs-9 col-sm-7 col-sm-push-1 ">
+                    <h4 style="margin: 0">
+                      {{::evt.Event}}
+                    </h4>
+                    <p class="text-muted" style="margin:0">
+                      <i class="fa fa-clock-o"></i>
+                      <small>{{::evt.StartTime | amDateFormat:'h:mm'}}-{{::evt.Endtime | amDateFormat:'h:mma'}}</small>
+                    </p>
+                  </div>
+
+                  <div class="col-xs-3 col-sm-1 col-sm-pull-7 col-xs-pull-0 text-xs-right ">
+                    <a href="javascript:;" ng-click="vm.toggleMySchedule(evt)" ng-class="{'fa-star text-primary' : evt.UserGoing, 'text-muted fa-star-o': !evt.UserGoing}" class="fa fa-3x superstar"></a>
+                  </div>
+
+                  <div class="col-xs-9 col-sm-4">
+                    <p class="text-sm-right" style="margin: 0">
+                      <button style="width:185px" ng-click="vm.filterStageClick(evt.Where)" class="btn btn-pill btn-xs btn{{::vm.MakeColor(evt.Where)}}">{{evt.Where}}</button>
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="block-inverse block" ng-show="vm.sched().length == 0">
+          <p>
+            <em>Where'd everyone go?!</em>
+          </p>
+            Looks like you filtered out all the events. Don't panic. Just remove some of your filters.
+            <ul>
+              <li ng-show="vm.FilterStage != ''">
+                <a href="javascript:;" ng-click="vm.FilterStage = ''">Show All Stages</a>
+              </li>
+
+              <li ng-show="vm.ShowMyScheduleOnly=='true'">
+                <a href="javascript:;" ng-click="vm.ShowMyScheduleOnly='false'">Show All Scheduled</a>
+              </li>
+
+              <li ng-show="vm.selectedBand !=''">
+                <a href="javascript:;" ng-click="vm.selectedBand = ''">Show All Artists &amp; Events</a>
+              </li>
+            </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- build:js scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/moment/moment.js"></script>
+    <script src="/bower_components/angular-filter/dist/angular-filter.js"></script>
+    <script src="/bower_components/angular-moment/angular-moment.js"></script>
+    <script src="/bower_components/fastclick/lib/fastclick.js"></script>
+    <script src="/bower_components/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+
+    <!-- build:js scripts/main.js -->
+    <script src="scripts/main.js"></script>
+    <!-- endbuild -->
+
+    <script>
+      if ('addEventListener' in document) {
+        document.addEventListener('DOMContentLoaded', function() {
+          FastClick.attach(document.body);
+        }, false);
+      };
+    </script>
+
+  </body>
+</html>
