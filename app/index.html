@@ -8,7 +8,6 @@
 
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
     <link href="http://www.appaloosafestival.com/dist/toolkit-bold.min.css" rel="stylesheet">
-    <!-- Place favicon.ico in the root directory -->
 
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
@@ -17,12 +16,27 @@
     <!-- endbuild -->
 
     <!-- build:css styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
+
     <!-- endbuild -->
 
     <style>
       [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
         display: none !important;
+      }
+
+      .fa-2x{
+        vertical-align: middle;
+      }
+
+      .superstar{
+        text-decoration: none !important;
+      }
+
+      .filter-control, .filter-control:focus{
+        /*box-shadow: 0 0 32px #006432,0 0 32px #006432,0 0 32px #006432;*/
+        /*background-color:#006432;*/
+        /*color:#FFC400;*/
+        margin-top:10px;
       }
 
       .cssload-loader{
@@ -98,50 +112,90 @@
   </head>
   <body>
 
+  <script>
+    // Load the SDK asynchronously
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: '35390834549',
+        cookie: true,  // enable cookies to allow the server to access // the session
+        xfbml: true,  // parse social plugins on this page
+        version: 'v2.7'
+      });
+    };
+    (function (d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
 
+  <script>
+    if ('addEventListener' in document) {
+      document.addEventListener('DOMContentLoaded', function() {
+        FastClick.attach(document.body);
+      }, false);
+    };
+  </script>
 
   <div ng-app="schedule">
     <div ng-controller="mainViewCtrl as vm">
+
       <div id="spinner" style="position:fixed; top:50%; left:50%" ng-hide="vm.allEvents.length > 0">
         <div class="cssload-loader"></div>
       </div>
       <div class="ng-cloak" class="container-fluid">
-
+        <pre ng-hide="true">
+          {{vm | json}}
+        </pre>
         <div class="row">
-          <a href="/"><i class="fa fa-2x fa-home text-primary"></i> Main Site</a>
+          <div class="pull-left" >
+            <a href="/"><i class="fa fa-2x fa-home text-primary"></i> Main Site</a>
+          </div>
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" ng-if="vm.someEventsFavorited">
+            <button type="button" ng-click="vm.shareOnFacebook()" class="btn btn-success btn-block" ><i class="fa fa-2x fa-facebook-official"></i> Share Your Schedule</button>
+          </div>
+
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" ng-if="vm.someEventsFavorited">
+            <button type="button" class="btn btn-success btn-block" ng-click="vm.emailSchedule()" ><i class="fa fa-2x fa-envelope"></i> Email Your Schedule</button>
+          </div>
         </div>
 
         <div class="row">
 
-          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
             <select class="form-control filter-control" ng-model="vm.FilterStage">
               <option value="">All Stages</option>
               <option ng-repeat="option in vm.allEvents | unique: 'Where' | orderBy : vm.StageOrder" value="{{option.Where}}">{{option.Where}}</option>
             </select>
           </div>
 
-          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
             <select class="form-control filter-control" ng-model="vm.selectedDay">
-              <option value="9/3/2016" selected="selected">Sat. 9/3</option>
-              <option value="9/4/2016">Sun. 9/4</option>
+              <option value="9/1/2017" selected="selected">Fri. 9/1</option>
+              <option value="9/2/2017" selected="selected">Sat. 9/2</option>
+              <option value="9/3/2017" selected="selected">Sun. 9/3</option>
             </select>
           </div>
 
-          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-            <select class="form-control filter-control" ng-model="vm.ShowMyScheduleOnly">
-              <option value = "false">All Scheduled</option>
-              <option value = "true">My Scheduled</option>
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
+            <select class="form-control filter-control" ng-model="vm.ShowSchedule">
+              <option value = "all">All Scheduled</option>
+              <option value = "my">My Scheduled</option>
+              <option value = "shared" ng-if="vm.shared">Shared With Me</option>
             </select>
           </div>
 
-          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2">
             <select class="form-control filter-control" ng-model="vm.ShowAnyTimeEvents">
               <option value = "true">All Times</option>
               <option value = "false">Upcoming</option>
             </select>
           </div>
 
-          <div class="col-xs-12 ">
+          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4">
             <select class="form-control filter-control" ng-model="vm.selectedBand">
               <option value="">All Artists &amp; Events</option>
               <option ng-repeat="option in vm.allEvents | unique: 'Artist || Event' | orderBy : 'Artist || Event'" value="{{option.Artist || option.Event}}">{{option.Artist || option.Event}}</option>
@@ -156,20 +210,20 @@
         <div ng-repeat="group  in vm.sched()  | groupBy: 'StartTime' | toArray:true | orderBy: '$key' track by $index ">
           <div class="panel panel-primary" style="border:none">
             <div class="panel-heading">
-              <span class=" panel-title">{{::group.$key | amDateFormat:'h:mma' }}</span>
+              <span class=" panel-title">{{group.$key | amDateFormat:'h:mma' }}</span>
             </div>
 
-            <ul class="list-group" ng-repeat="evt in group | orderBy: vm.StageOrder">
+            <ul class="list-group" ng-repeat="evt in group | orderBy: vm.StageOrder track by evt.Id">
               <li class="list-group-item">
                 <div class="row" >
 
                   <div class="col-xs-9 col-sm-7 col-sm-push-1 ">
                     <h4 style="margin: 0">
-                      {{::evt.Event}}
+                      {{evt.Event}}
                     </h4>
                     <p class="text-muted" style="margin:0">
                       <i class="fa fa-clock-o"></i>
-                      <small>{{::evt.StartTime | amDateFormat:'h:mm'}}-{{::evt.Endtime | amDateFormat:'h:mma'}}</small>
+                      <small>{{evt.StartTime | amDateFormat:'h:mm'}}-{{evt.Endtime | amDateFormat:'h:mma'}}</small>
                     </p>
                   </div>
 
@@ -179,7 +233,7 @@
 
                   <div class="col-xs-9 col-sm-4">
                     <p class="text-sm-right" style="margin: 0">
-                      <button style="width:185px" ng-click="vm.filterStageClick(evt.Where)" class="btn btn-pill btn-xs btn{{::vm.MakeColor(evt.Where)}}">{{evt.Where}}</button>
+                      <button style="width:185px" ng-click="vm.filterStageClick(evt.Where)" class="btn btn-pill btn-xs btn{{vm.MakeColor(evt.Where)}}">{{evt.Where}}</button>
                     </p>
 
                   </div>
@@ -201,8 +255,8 @@
                 <a href="javascript:;" ng-click="vm.FilterStage = ''">Show All Stages</a>
               </li>
 
-              <li ng-show="vm.ShowMyScheduleOnly=='true'">
-                <a href="javascript:;" ng-click="vm.ShowMyScheduleOnly='false'">Show All Scheduled</a>
+              <li ng-show="vm.ShowSchedule!='all'">
+                <a href="javascript:;" ng-click="vm.ShowSchedule='all'">Show All Scheduled</a>
               </li>
 
               <li ng-show="vm.selectedBand !=''">
@@ -214,6 +268,7 @@
     </div>
   </div>
 
+
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="/bower_components/jquery/dist/jquery.js"></script>
@@ -223,6 +278,7 @@
     <script src="/bower_components/angular-moment/angular-moment.js"></script>
     <script src="/bower_components/fastclick/lib/fastclick.js"></script>
     <script src="/bower_components/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="/bower_components/big-integer/BigInteger.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -230,14 +286,6 @@
     <!-- build:js scripts/main.js -->
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
-
-    <script>
-      if ('addEventListener' in document) {
-        document.addEventListener('DOMContentLoaded', function() {
-          FastClick.attach(document.body);
-        }, false);
-      };
-    </script>
 
   </body>
 </html>

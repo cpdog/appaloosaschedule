@@ -1,20 +1,32 @@
 (function(){
+  'use strict';
   angular.module('schedule',['angular.filter','angularMoment'])
-    .controller('mainViewCtrl', function($filter, $interval, $window){
+    .controller('mainViewCtrl', function($filter, $interval, $window, $location){
       var vm = this;
-
-      vm.myEvents = angular.fromJson($window.localStorage.getItem('myEvents')) || [];
+      vm.shared = $location.search().shared;
+      vm.myEvents = angular.fromJson($window.localStorage.getItem('myEvents_v2')) || {};
       vm.FilterStage = null;
       vm.ShowingAllEvents = true;
-      vm.ShowMyScheduleOnly = 'false';
-      vm.ShowAnyTimeEvents = 'false';
-      vm.selectedDay = '9/3/2016';
 
-      if (new Date() > new Date(2016,8,4,4)) {
-        vm.selectedDay = '9/4/2016';
+      if (vm.shared){
+        vm.ShowSchedule = 'shared';
+      }
+      else {
+        vm.ShowSchedule = 'all';
+      }
+      vm.ShowAnyTimeEvents = 'false';
+      vm.selectedDay = '9/1/2017';
+      vm.someEventsFavorited = false;
+
+
+      if (new Date() > new Date(2017,8,2,2)) {
+        vm.selectedDay = '9/3/2016';
+      }
+      else if (new Date() > new Date(2017,8,1,2)) {
+        vm.selectedDay = '9/2/2016';
       }
 
-      if (new Date() > new Date(2016,8,5)) {
+      if (new Date() > new Date(2017,8,4)) {
         vm.ShowAnyTimeEvents = 'true';
       }
 
@@ -23,456 +35,81 @@
 
       vm.Date = new Date();
       var schedule = [
-        {
-          Event: 'Bud\'s Collective',
-          StartTime: new Date(2016,8,3,11,0),
-          Endtime: new Date(2016,8,3,11,30),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'Gothard Sisters',
-          StartTime: new Date(2016,8,3,12),
-          Endtime: new Date(2016,8,3,12,45),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'Six-String Soldiers',
-          StartTime: new Date(2016,8,3,13,15),
-          Endtime: new Date(2016,8,3,14,0),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'Bumper Jacksons',
-          StartTime: new Date(2016,8,3,14,30),
-          Endtime: new Date(2016,8,3,15,30),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'Socks in the Frying Pan',
-          StartTime: new Date(2016,8,3,16,0),
-          Endtime: new Date(2016,8,3,17,0),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'The Accidentals',
-          StartTime: new Date(2016,8,3,17,30),
-          Endtime: new Date(2016,8,3,18,30),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'Mipso',
-          StartTime: new Date(2016,8,3,19,0),
-          Endtime: new Date(2016,8,3,20,15),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'Humming House',
-          StartTime: new Date(2016,8,3,20,30),
-          Endtime: new Date(2016,8,3,21,30),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'Scythian',
-          StartTime: new Date(2016,8,3,22,0),
-          Endtime: new Date(2016,8,3,23,15),
-          Where: 'Main Stage'
-        },
-        {
-          Event: 'Ben-David Warner',
-          StartTime: new Date(2016,8,3,11,30),
-          Endtime: new Date(2016,8,3,12,0),
-          Where: 'Saloon Stage'
-        },
-        {
-          Event: 'Bumper Jacksons',
-          StartTime: new Date(2016,8,3,12,45),
-          Endtime: new Date(2016,8,3,13,15),
-          Where: 'Saloon Stage'
-        },
-        {
-          Event: 'Moore Brothers',
-          StartTime: new Date(2016,8,3,14,0),
-          Endtime: new Date(2016,8,3,14,30),
-          Where: 'Saloon Stage'
-        },
-        {
-          Event: 'Low Water Bridge',
-          StartTime: new Date(2016,8,3,15,30),
-          Endtime: new Date(2016,8,3,16,0),
-          Where: 'Saloon Stage'
-        },
-        {
-          Event: 'Kenny Kohlhaas',
-          StartTime: new Date(2016,8,3,17,0),
-          Endtime: new Date(2016,8,3,17,30),
-          Where: 'Saloon Stage'
-        },
-        {
-          Event: 'Duskwhales',
-          StartTime: new Date(2016,8,3,18,30),
-          Endtime: new Date(2016,8,3,19,0),
-          Where: 'Saloon Stage'
-        },
-        {
-          Event: 'Six-String Soldiers',
-          StartTime: new Date(2016,8,3,20,15),
-          Endtime: new Date(2016,8,3,20,30),
-          Where: 'Saloon Stage'
-        },
-        {
-          Event: 'Billy Strings',
-          StartTime: new Date(2016,8,3,21,30),
-          Endtime: new Date(2016,8,3,22,0),
-          Where: 'Saloon Stage'
-        },
-        {
-          Event: 'Low Water Bridge',
-          StartTime: new Date(2016,8,3,11,0),
-          Endtime: new Date(2016,8,3,11,30),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'Swing Theory',
-          StartTime: new Date(2016,8,3,12,0),
-          Endtime: new Date(2016,8,3,13,0),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'Gothard Sisters',
-          StartTime: new Date(2016,8,3,13,30),
-          Endtime: new Date(2016,8,3,14,30),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'The Joybells',
-          StartTime: new Date(2016,8,3,15,0),
-          Endtime: new Date(2016,8,3,15,45),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'The Boyle School',
-          StartTime: new Date(2016,8,3,15,50),
-          Endtime: new Date(2016,8,3,16,10),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'Hillbilly Thomists',
-          StartTime: new Date(2016,8,3,16,30),
-          Endtime: new Date(2016,8,3,17,30),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'Marie Miller\'s Girl Power Hour',
-          Artist: 'Marie Miller',
-          StartTime: new Date(2016,8,3,18,0),
-          Endtime: new Date(2016,8,3,19,30),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'Billy Strings',
-          StartTime: new Date(2016,8,3,19,30),
-          Endtime: new Date(2016,8,3,20,30),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'Karikatura',
-          StartTime: new Date(2016,8,3,21,0),
-          Endtime: new Date(2016,8,3,22,0),
-          Where: 'Ranch Stage'
-        },
-        {
-          Event: 'Patrick Mahon',
-          StartTime: new Date(2016,8,3,11,0),
-          Endtime: new Date(2016,8,3,11,30),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Hey\'thoven',
-          StartTime: new Date(2016,8,3,12,0),
-          Endtime: new Date(2016,8,3,13,30),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Alanna Boudreau',
-          StartTime: new Date(2016,8,3,13,30),
-          Endtime: new Date(2016,8,3,14,30),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Rebecca Roubion',
-          StartTime: new Date(2016,8,3,15,0),
-          Endtime: new Date(2016,8,3,16,0),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Lowland Hum',
-          StartTime: new Date(2016,8,3,16,30),
-          Endtime: new Date(2016,8,3,17,30),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Adam & I',
-          StartTime: new Date(2016,8,3,18,0),
-          Endtime: new Date(2016,8,3,19,0),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Kevin Heider',
-          StartTime: new Date(2016,8,3,19,30),
-          Endtime: new Date(2016,8,3,20,30),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Penny & Sparrow',
-          StartTime: new Date(2016,8,3,21,0),
-          Endtime: new Date(2016,8,3,22,0),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Late Night Jam Feat. Scythian',
-          Artist: 'Scythian',
-          StartTime: new Date(2016,8,3,23,30),
-          Endtime: new Date(2016,8,4,2,0),
-          Where: 'Songwriter Stage'
-        },
-        {
-          Event: 'Justina Miller',
-          StartTime: new Date(2016,8,3,11,30),
-          Endtime: new Date(2016,8,3,12,0),
-          Where: 'Frontier Stage'
-        },
-        {
-          Event: 'Bud\'s Collective',
-          StartTime: new Date(2016,8,3,12,30),
-          Endtime: new Date(2016,8,3,13,30),
-          Where: 'Frontier Stage'
-        },
-        {
-          Event: 'Little Hill Trio',
-          StartTime: new Date(2016,8,3,14,0),
-          Endtime: new Date(2016,8,3,15,0),
-          Where: 'Frontier Stage'
-        },
-        {
-          Event: 'Moore Brothers',
-          StartTime: new Date(2016,8,3,15,30),
-          Endtime: new Date(2016,8,3,16,30),
-          Where: 'Frontier Stage'
-        },
-        {
-          Event: 'Vinyl Tracks',
-          StartTime: new Date(2016,8,3,17,0),
-          Endtime: new Date(2016,8,3,18,0),
-          Where: 'Frontier Stage'
-        },
-        {
-          Event: 'Will Overman Band',
-          StartTime: new Date(2016,8,3,18,30),
-          Endtime: new Date(2016,8,3,19,30),
-          Where: 'Frontier Stage'
-        },
-        {
-          Event: 'The Collection',
-          StartTime: new Date(2016,8,3,20,0),
-          Endtime: new Date(2016,8,3,21,0),
-          Where: 'Frontier Stage'
-        },
-        {
-          Event: 'Duskwhales',
-          StartTime: new Date(2016,8,3,21,30),
-          Endtime: new Date(2016,8,3,22,0),
-          Where: 'Frontier Stage'
-        },
-        {
-          Event: 'Gothard Sisters',
-          StartTime: new Date(2016,8,3,11,0),
-          Endtime: new Date(2016,8,3,11,30),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'The Accidentals',
-          StartTime: new Date(2016,8,3,12,0),
-          Endtime: new Date(2016,8,3,13,0),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'Socks in the Frying Pan',
-          StartTime: new Date(2016,8,3,13,0),
-          Endtime: new Date(2016,8,3,14,0),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'Fitzgeralds',
-          StartTime: new Date(2016,8,3,14,0),
-          Endtime: new Date(2016,8,3,15,0),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'Penny & Sparrow',
-          StartTime: new Date(2016,8,3,15,0),
-          Endtime: new Date(2016,8,3,16,0),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'Mipso',
-          StartTime: new Date(2016,8,3,16,0),
-          Endtime: new Date(2016,8,3,17,0),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'Humming House',
-          StartTime: new Date(2016,8,3,17,0),
-          Endtime: new Date(2016,8,3,18,0),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'Karikatura',
-          StartTime: new Date(2016,8,3,18,0),
-          Endtime: new Date(2016,8,3,19,0),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'Lowland Hum',
-          StartTime: new Date(2016,8,3,19,0),
-          Endtime: new Date(2016,8,3,20,0),
-          Where: 'Music Workshop'
-        },
-        {
-          Event: 'Cake For Dinner',
-          StartTime: new Date(2016,8,3,11,0),
-          Endtime: new Date(2016,8,3,12,0),
-          Where: 'Kids Program'
-        },
-        {
-          Event: 'Arts & Crafts',
-          NonArtist:true,
-          StartTime: new Date(2016,8,3,12,0),
-          Endtime: new Date(2016,8,3,13,0),
-          Where: 'Kids Program'
-        },
-        {
-          Event: 'Marie Miller',
-          StartTime: new Date(2016,8,3,13,0),
-          Endtime: new Date(2016,8,3,14,0),
-          Where: 'Kids Program'
-        },
-        {
-          Event: 'Arts & Crafts',
-          NonArtist:true,
-          StartTime: new Date(2016,8,3,14,0),
-          Endtime: new Date(2016,8,3,15,0),
-          Where: 'Kids Program'
-        },
-        {
-          Event: 'Arts & Crafts',
-          NonArtist:true,
-          StartTime: new Date(2016,8,3,15,0),
-          Endtime: new Date(2016,8,3,16,0),
-          Where: 'Kids Program'
-        },
-        {
-          Event: 'Princess & Pirates Sing-Along',
-          NonArtist:true,
-          StartTime: new Date(2016,8,3,16,0),
-          Endtime: new Date(2016,8,3,17,0),
-          Where: 'Kids Program'
-        },
-        {
-          Event: 'Arts & Crafts',
-          NonArtist:true,
-          StartTime: new Date(2016,8,3,17,0),
-          Endtime: new Date(2016,8,3,18,0),
-          Where: 'Kids Program'
-        },
-        {
-          Event: 'Kids Musical',
-          NonArtist:true,
-          StartTime: new Date(2016,8,3,18,0),
-          Endtime: new Date(2016,8,3,19,0),
-          Where: 'Kids Program'
-        },
+        {Id: 1, Event: 'Ben-David Warner', Where:'Clubhouse Stage', StartTime:new Date(2017,8,1,21,0), Endtime: new Date(2017,8,1,22,30)},
+        {Id: 2, Event: 'Will Overman Band', Where:'Clubhouse Stage', StartTime:new Date(2017,8,1,23,0), Endtime: new Date(2017,8,2,0,30)},
+        {Id: 3, Event: 'Humming House', Where:'Clubhouse Stage', StartTime:new Date(2017,8,2,23,30), Endtime: new Date(2017,8,3,0,30)},
+        {Id: 4, Event: 'Forlorn Strangers', Where:'Clubhouse Stage', StartTime:new Date(2017,8,3,1,0), Endtime: new Date(2017,8,3,2,0)},
+        {Id: 5, Event: 'Catholic Mass', NonArtist:true, Where:'Clubhouse Stage', StartTime:new Date(2017,8,3,9,30), Endtime: new Date(2017,8,3,10,30)},
+        {Id: 6, Event: 'Scythian & Friends', Where:'Clubhouse Stage', StartTime:new Date(2017,8,3,23,30), Endtime: new Date(2017,8,4,1,30)},
 
-        { Event: 'Gothard Sisters', Where:'Main Stage', StartTime:new Date(2016,8,4,11,0), Endtime: new Date(2016,8,4,11,30)},
-        { Event: 'The Fitzgeralds', Where:'Main Stage', StartTime:new Date(2016,8,4,12,0), Endtime: new Date(2016,8,4,13,0)},
-        { Event: 'Penny & Sparrow', Where:'Main Stage', StartTime:new Date(2016,8,4,13,30), Endtime: new Date(2016,8,4,14,30)},
-        { Event: 'Socks in the Frying Pan', Where:'Main Stage', StartTime:new Date(2016,8,4,15,0), Endtime: new Date(2016,8,4,16,0)},
-        { Event: 'Billy Strings', Where:'Main Stage', StartTime:new Date(2016,8,4,16,30), Endtime: new Date(2016,8,4,17,30)},
-        { Event: 'Marie Miller', Where:'Main Stage', StartTime:new Date(2016,8,4,18,0), Endtime: new Date(2016,8,4,19,0)},
-        { Event: 'The Black Lillies', Where:'Main Stage', StartTime:new Date(2016,8,4,19,30), Endtime: new Date(2016,8,4,20,30)},
-        { Event: 'Scythian', Where:'Main Stage', StartTime:new Date(2016,8,4,21,0), Endtime: new Date(2016,8,4,22,0)},
-        { Event: 'Patrick Mahon', Where:'Saloon Stage', StartTime:new Date(2016,8,4,11,30), Endtime: new Date(2016,8,4,12,0)},
-        { Event: 'Low Water Bridge', Where:'Saloon Stage', StartTime:new Date(2016,8,4,13,0), Endtime: new Date(2016,8,4,13,30)},
-        { Event: 'Tellico', Where:'Saloon Stage', StartTime:new Date(2016,8,4,14,30), Endtime: new Date(2016,8,4,15,0)},
-        { Event: 'Swing Theory', Where:'Saloon Stage', StartTime:new Date(2016,8,4,16,0), Endtime: new Date(2016,8,4,16,30)},
-        { Event: 'Ben-David Warner', Where:'Saloon Stage', StartTime:new Date(2016,8,4,17,30), Endtime: new Date(2016,8,4,18,0)},
-        { Event: 'Bud\'s Collective', Where:'Saloon Stage', StartTime:new Date(2016,8,4,19,0), Endtime: new Date(2016,8,4,19,30)},
-        { Event: 'Fitzgeralds', Where:'Saloon Stage', StartTime:new Date(2016,8,4,20,30), Endtime: new Date(2016,8,4,21,0)},
-        { Event: 'Catholic Mass', Where:'Ranch Stage', StartTime:new Date(2016,8,4,10,0), Endtime: new Date(2016,8,4,11,0)},
-        { Event: 'Ben-David Warner', Where:'Ranch Stage', StartTime:new Date(2016,8,4,11,30), Endtime: new Date(2016,8,4,12,0)},
-        { Event: 'Bud\'s Collective', Where:'Ranch Stage', StartTime:new Date(2016,8,4,12,30), Endtime: new Date(2016,8,4,13,30)},
-        { Event: 'Gothard Sisters', Where:'Ranch Stage', StartTime:new Date(2016,8,4,14,0), Endtime: new Date(2016,8,4,15,0)},
-        { Event: 'Six-String Soldiers', Where:'Ranch Stage', StartTime:new Date(2016,8,4,15,30), Endtime: new Date(2016,8,4,16,30)},
-        { Event: 'Kevin Heider', Where:'Ranch Stage', StartTime:new Date(2016,8,4,17,0), Endtime: new Date(2016,8,4,18,0)},
-        { Event: 'The Accidentals', Where:'Ranch Stage', StartTime:new Date(2016,8,4,18,30), Endtime: new Date(2016,8,4,19,30)},
-        { Event: 'Humming House', Where:'Ranch Stage', StartTime:new Date(2016,8,4,20,0), Endtime: new Date(2016,8,4,21,0)},
+        {Id: 7, Event: 'Gothard Sisters', Where:'Main Stage', StartTime:new Date(2017,8,2,12,0), Endtime: new Date(2017,8,2,13,15)},
+        {Id: 8, Event: 'Runa', Where:'Main Stage', StartTime:new Date(2017,8,2,14,30), Endtime: new Date(2017,8,2,15,45)},
+        {Id: 9, Event: 'Humming House', Where:'Main Stage', StartTime:new Date(2017,8,2,17,0), Endtime: new Date(2017,8,2,18,15)},
+        {Id: 10, Event: 'Scythian', Where:'Main Stage', StartTime:new Date(2017,8,2,19,15), Endtime: new Date(2017,8,2,20,45)},
+        {Id: 11, Event: 'Karikatura', Where:'Main Stage', StartTime:new Date(2017,8,2,21,45), Endtime: new Date(2017,8,2,23,0)},
 
-        { Event: 'Hey\'thoven', Where:'Songwriter Stage', StartTime:new Date(2016,8,4,11,30), Endtime: new Date(2016,8,4,12,0)},
-        { Event: 'Adam & I', Where:'Songwriter Stage', StartTime:new Date(2016,8,4,12,30), Endtime: new Date(2016,8,4,13,30)},
-        { Event: 'Little Hill Trio', Where:'Songwriter Stage', StartTime:new Date(2016,8,4,14,0), Endtime: new Date(2016,8,4,15,0)},
-        { Event: 'Bryan Elijah Smith', Where:'Songwriter Stage', StartTime:new Date(2016,8,4,15,30), Endtime: new Date(2016,8,4,16,30)},
-        { Event: 'Lowland Hum', Where:'Songwriter Stage', StartTime:new Date(2016,8,4,17,0), Endtime: new Date(2016,8,4,18,0)},
-        { Event: 'Swing Theory', Where:'Songwriter Stage', StartTime:new Date(2016,8,4,18,30), Endtime: new Date(2016,8,4,19,30)},
-        { Event: 'Robbie Limon', Where:'Songwriter Stage', StartTime:new Date(2016,8,4,20,0), Endtime: new Date(2016,8,4,21,0)},
-        { Event: 'Latenight Jam w/ Marie Miller & Carbon Leaf', Artist:'Marie Miller', Where:'Songwriter Stage', StartTime:new Date(2016,8,4,22,30), Endtime: new Date(2016,8,5,1,0)},
+        {Id: 12, Event: 'Will Overman Band', Where:'Saloon Stage', StartTime:new Date(2017,8,2,11,0), Endtime: new Date(2017,8,2,12,0)},
+        {Id: 13, Event: 'Forlorn Strangers', Where:'Saloon Stage', StartTime:new Date(2017,8,2,13,15), Endtime: new Date(2017,8,2,14,30)},
+        {Id: 14, Event: 'The Brother Brothers', Where:'Saloon Stage', StartTime:new Date(2017,8,2,15,45), Endtime: new Date(2017,8,2,17,0)},
+        {Id: 15, Event: 'Six-String Soldiers', Where:'Saloon Stage', StartTime:new Date(2017,8,2,18,15), Endtime: new Date(2017,8,2,19,15)},
+        {Id: 16, Event: 'The Plate Scrapers', Where:'Saloon Stage', StartTime:new Date(2017,8,2,20,45), Endtime: new Date(2017,8,2,21,45)},
 
-        { Event: 'Dead Man\'s Hollow', Where:'Frontier Stage', StartTime:new Date(2016,8,4,11,30), Endtime: new Date(2016,8,4,12,30)},
-        { Event: 'Maggie Valley Band', Where:'Frontier Stage', StartTime:new Date(2016,8,4,13,0), Endtime: new Date(2016,8,4,14,0)},
-        { Event: 'Moore Brothers', Where:'Frontier Stage', StartTime:new Date(2016,8,4,14,30), Endtime: new Date(2016,8,4,15,30)},
-        { Event: 'Low Water Bridge', Where:'Frontier Stage', StartTime:new Date(2016,8,4,16,0), Endtime: new Date(2016,8,4,17,0)},
-        { Event: 'Tellico', Where:'Frontier Stage', StartTime:new Date(2016,8,4,17,30), Endtime: new Date(2016,8,4,18,30)},
-        { Event: 'The Collection', Where:'Frontier Stage', StartTime:new Date(2016,8,4,19,0), Endtime: new Date(2016,8,4,19,45)},
-        { Event: 'Dear Other', Where:'Frontier Stage', StartTime:new Date(2016,8,4,20,15), Endtime: new Date(2016,8,4,21,0)},
+        {Id: 17, Event: 'Cake For Dinner', Where:'Kids Stage', StartTime:new Date(2017,8,2,11,30), Endtime: new Date(2017,8,2,12,15)},
+        {Id: 18, Event: 'Princess Singalong', Where:'Kids Stage', StartTime:new Date(2017,8,2,13,30), Endtime: new Date(2017,8,2,14,15)},
 
-        { Event: 'Lowland Hum', Where:'Music Workshop', StartTime:new Date(2016,8,4,11,30), Endtime: new Date(2016,8,4,12,30)},
-        { Event: 'Billy Strings', Where:'Music Workshop', StartTime:new Date(2016,8,4,12,30), Endtime: new Date(2016,8,4,13,30)},
-        { Event: 'The Collection', Where:'Music Workshop', StartTime:new Date(2016,8,4,13,30), Endtime: new Date(2016,8,4,14,30)},
-        { Event: 'The Accidentals', Where:'Music Workshop', StartTime:new Date(2016,8,4,14,30), Endtime: new Date(2016,8,4,15,30)},
-        { Event: 'Humming House', Where:'Music Workshop', StartTime:new Date(2016,8,4,15,30), Endtime: new Date(2016,8,4,16,30)},
-        { Event: 'The Black Lillies', Where:'Music Workshop', StartTime:new Date(2016,8,4,16,30), Endtime: new Date(2016,8,4,17,30)},
-        { Event: 'Gothard Sisters', Where:'Music Workshop', StartTime:new Date(2016,8,4,17,30), Endtime: new Date(2016,8,4,18,30)},
-        { Event: 'Penny & Sparrow', Where:'Music Workshop', StartTime:new Date(2016,8,4,18,30), Endtime: new Date(2016,8,4,19,30)},
+        {Id: 19, Event: 'Humming House', Where:'Workshop Zone', StartTime:new Date(2017,8,2,12,30), Endtime: new Date(2017,8,2,13,15)},
+        {Id: 20, Event: 'Banjo Workshop', Where:'Workshop Zone', StartTime:new Date(2017,8,2,14,30), Endtime: new Date(2017,8,2,15,15)},
+        {Id: 21, Event: 'Gothard Sisters', Where:'Workshop Zone', StartTime:new Date(2017,8,2,15,30), Endtime: new Date(2017,8,2,16,15)},
+        {Id: 22, Event: 'Runa', Where:'Workshop Zone', StartTime:new Date(2017,8,2,16,45), Endtime: new Date(2017,8,2,17,30)},
+        {Id: 22, Event: 'The Brother Brothers', Where:'Workshop Zone', StartTime:new Date(2017,8,2,18,0), Endtime: new Date(2017,8,2,18,45)},
 
-        { Event: 'Arts & Crafts', Where:'Kids Program', StartTime:new Date(2016,8,4,11,0), Endtime: new Date(2016,8,4,12,0)},
-        { Event: 'Arts & Crafts', Where:'Kids Program', StartTime:new Date(2016,8,4,12,0), Endtime: new Date(2016,8,4,13,0)},
-        { Event: 'Marie Miller', Where:'Kids Program', StartTime:new Date(2016,8,4,13,0), Endtime: new Date(2016,8,4,14,0)},
-        { Event: 'Arts & Crafts', Where:'Kids Program', StartTime:new Date(2016,8,4,14,0), Endtime: new Date(2016,8,4,15,0)},
-        { Event: 'Cake For Dinner', Where:'Kids Program', StartTime:new Date(2016,8,4,15,0), Endtime: new Date(2016,8,4,16,0)},
-        { Event: 'Arts & Crafts', Where:'Kids Program', StartTime:new Date(2016,8,4,16,0), Endtime: new Date(2016,8,4,17,0)},
-        { Event: 'Princess & Pirate Singalong', Artist:'Little Hill Trio', Where:'Kids Program', StartTime:new Date(2016,8,4,17,0), Endtime: new Date(2016,8,4,18,0)},
-        { Event: 'Kid\'s Musical', Artist:'Dear Other', Where:'Kids Program', StartTime:new Date(2016,8,4,18,0), Endtime: new Date(2016,8,4,19,0)}
+        {Id: 23, Event: 'Tajci', Where:'Main Stage', StartTime:new Date(2017,8,3,11,0), Endtime: new Date(2017,8,3,12,0)},
+        {Id: 24, Event: 'Fireside Collective', Where:'Main Stage', StartTime:new Date(2017,8,3,13,0), Endtime: new Date(2017,8,3,14,15)},
+        {Id: 25, Event: 'Gothard Sisters', Where:'Main Stage', StartTime:new Date(2017,8,3,15,0), Endtime: new Date(2017,8,3,16,0)},
+        {Id: 26, Event: 'Frank Solivan', Where:'Main Stage', StartTime:new Date(2017,8,3,16,30), Endtime: new Date(2017,8,3,17,45)},
+        {Id: 27, Event: 'Scythian', Where:'Main Stage', StartTime:new Date(2017,8,3,19,0), Endtime: new Date(2017,8,3,20,30)},
+        {Id: 28, Event: 'Eddie From Ohio', Where:'Main Stage', StartTime:new Date(2017,8,3,21,45), Endtime: new Date(2017,8,3,23,0)},
+
+        {Id: 29, Event: 'Ben-David Warner', Where:'Saloon Stage', StartTime:new Date(2017,8,3,12,0), Endtime: new Date(2017,8,3,13,0)},
+        {Id: 30, Event: 'Little Hill Trio', Where:'Saloon Stage', StartTime:new Date(2017,8,3,14,15), Endtime: new Date(2017,8,3,15,0)},
+        {Id: 31, Event: 'Boyle School', Where:'Saloon Stage', StartTime:new Date(2017,8,3,16,0), Endtime: new Date(2017,8,3,16,30)},
+        {Id: 32, Event: 'Karikatura', Where:'Saloon Stage', StartTime:new Date(2017,8,3,17,45), Endtime: new Date(2017,8,3,19,0)},
+        {Id: 33, Event: 'Jesse Lege & Joel Savoy', Where:'Saloon Stage', StartTime:new Date(2017,8,3,20,30), Endtime: new Date(2017,8,3,21,45)},
+
+        {Id: 34, Event: 'Sibling Rivalry', Where:'Kids Stage', StartTime:new Date(2017,8,3,11,45), Endtime: new Date(2017,8,3,12,30)},
+        {Id: 35, Event: 'Gothard Sisters', Where:'Kids Stage', StartTime:new Date(2017,8,3,12,45), Endtime: new Date(2017,8,3,13,30)},
+        {Id: 36, Event: 'Cake For Dinner', Where:'Kids Stage', StartTime:new Date(2017,8,3,15,45), Endtime: new Date(2017,8,3,16,30)},
+
+        {Id: 37, Event: 'Frank Solivan', Where:'Workshop Zone', StartTime:new Date(2017,8,3,13,45), Endtime: new Date(2017,8,3,14,30)},
+        {Id: 38, Event: 'Banjo Workshop', Where:'Workshop Zone', StartTime:new Date(2017,8,3,14,45), Endtime: new Date(2017,8,3,15,30)},
+        {Id: 39, Event: 'Cajun Cooking & Music Revival', Where:'Workshop Zone', StartTime:new Date(2017,8,3,16,45), Endtime: new Date(2017,8,3,17,30)}
+
+
         ];
         vm.allEvents = schedule;
 
+      /**
+       * @return {string}
+       */
       vm.MakeColor = function(where){
         switch(where){
           case 'Main Stage':
             return '-danger';
           case 'Saloon Stage':
             return '-primary';
-          case 'Ranch Stage':
-            return '-success';
-          case 'Songwriter Stage':
-            return '-warning';
-          case 'Music Workshop':
+          case 'Workshop Zone':
             return '-default';
-          case 'Kids Program':
+          case 'Kids Stage':
             return '-info';
-          case 'Frontier Stage':
-            return '-frontier';
+          case 'Clubhouse Stage':
+            return '-warning';
 
         }
       };
 
+      /**
+       * @return {number}
+       */
       vm.StageOrder = function (where){
         where = where.Where;
         switch(where){
@@ -480,15 +117,11 @@
             return 2;
           case 'Saloon Stage':
             return 3;
-          case 'Ranch Stage':
-            return 4;
-          case 'Songwriter Stage':
-            return 5;
-          case 'Music Workshop':
+          case 'Workshop Zone':
             return -1;
-          case 'Kids Program':
+          case 'Kids Stage':
             return 7;
-          case 'Frontier Stage':
+          case 'Clubhouse Stage':
             return 6;
         }
       };
@@ -500,17 +133,57 @@
       },60000);
 
 
+      function calculateShareId(){
+        var idBitMask = bigInt.zero;
+        for (var i=0; i< vm.allEvents.length; i++){
+          if (vm.allEvents[i].UserGoing) {
+            idBitMask = idBitMask.add(bigInt(2).pow(vm.allEvents[i].Id));
+          }
+        }
+
+        return idBitMask.toString();
+      }
+
+      vm.shareOnFacebook = function(){
+        FB.ui({
+          method: 'share',
+          display: 'popup',
+          href: 'http://www.appaloosafestival.com/interactive-schedule/#?shared=' + calculateShareId(),
+        });
+      };
+
+      vm.emailSchedule = function() {
+        var subj = encodeURIComponent('My awesome Appaloosa schedule!');
+        var msg = 'Check out all the AMAZING bands I\'m going to see at Appaloosa:\r\n';
+        var unique={};
+        for (var i=0; i< vm.allEvents.length; i++){
+          if (vm.allEvents[i].UserGoing) {
+            unique[vm.allEvents[i].Event]=1;
+          }
+        }
+
+        for (var key in unique){
+          if (unique.hasOwnProperty(key)){
+            msg+= key + '\r\n';
+          }
+        }
+
+        msg+='\n\nYou can check out my schedule here: http://www.appaloosafestival.com/interactive-schedule/#?shared=' + calculateShareId();
+
+        $window.open('mailto:?subject=' + subj + '&body=' + encodeURIComponent(msg),'_self');
+      };
+
       vm.toggleMySchedule = function(evt) {
-        if (vm.myEvents.indexOf(evt) >=0){
+        if (vm.myEvents[evt.Id]){
           evt.UserGoing=false;
-          vm.myEvents.splice(vm.myEvents.indexOf(evt),1);
+          delete vm.myEvents[evt.Id];
         }
         else {
           evt.UserGoing = true;
-          vm.myEvents.push(evt);
+          vm.myEvents[evt.Id]=true;
 
-          if ($window.localStorage.getItem('showMyEventMessage') !== 'shown') {
-            $window.localStorage.setItem('showMyEventMessage','shown');
+          if ($window.localStorage.getItem('showMyEventMessage_v2') !== 'shown') {
+            $window.localStorage.setItem('showMyEventMessage_v2','shown');
             $window.swal({
               type:'success',
               'title': 'Added to schedule',
@@ -520,8 +193,14 @@
           }
         }
 
-        $window.localStorage.setItem('myEvents', angular.toJson(vm.myEvents));
+        $window.localStorage.setItem('myEvents_v2', angular.toJson(vm.myEvents));
 
+        vm.someEventsFavorited = false;
+        for (var i=0; i< vm.allEvents.length; i++) {
+          if (vm.allEvents[i].UserGoing) {
+            vm.someEventsFavorited = true;
+          }
+        }
       };
 
 
@@ -536,7 +215,15 @@
         });
 
         filtered = filtered.filter(function(el) {
-          return vm.ShowMyScheduleOnly === 'false' || el.UserGoing;
+          if (vm.ShowSchedule === 'all'){
+            return true;
+          }
+          else if (vm.ShowSchedule === 'shared'){
+            return el.SharedEvent;
+          }
+          else {
+           return el.UserGoing;
+          }
         });
 
         filtered = filtered.filter(function(el) {
@@ -550,28 +237,22 @@
         vm.FilterStage = where;
       };
 
-      function getKeyFromEvent(evt){
-        return evt.Where + evt.Event + $window.moment(evt.StartTime).format('MM/DD/YYYY HH:mm');
-      }
-
       function setupEvents() {
-        var myEventDict = {};
-        for (var i=0; i<vm.myEvents.length; i++ ) {
-          var key = getKeyFromEvent(vm.myEvents[i]);
-          myEventDict[key]=true;
+        var shared = vm.shared ? bigInt(vm.shared) : null;
+        for (var i = 0; i < vm.allEvents.length; i++) {
+          var evt = vm.allEvents[i];
+          evt.UserGoing = !!vm.myEvents[evt.Id];
+          vm.someEventsFavorited = vm.someEventsFavorited || evt.UserGoing;
+          evt.SharedEvent = shared && shared.and(bigInt(2).pow(evt.Id)).neq(bigInt.zero.value);
         }
 
-        vm.myEvents = [];
-
-        for (i=0; i< vm.allEvents.length; i++){
-          var evt = vm.allEvents[i];
-          if (myEventDict[getKeyFromEvent(evt)]) {
-            vm.myEvents.push(evt);
-            evt.UserGoing=true;
-          }
-          else{
-            evt.UserGoing=false;
-          }
+        if (shared) {
+          $window.swal({
+            type: 'info',
+            'title': 'Someone shared a schedule with you!',
+            'text': 'You\'re viewing a schedule that someone else shared with you. Probably because they\'re awesome and you\'re awesome. If you want to see all the events, change "Shared With Me" to "All Scheduled" to customize and share your own schedule!',
+            'confirmButtonText': 'Awesome!'
+          });
         }
       }
 
