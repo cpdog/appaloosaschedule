@@ -24,6 +24,7 @@
     "$"                    : false,
     "angular"              : false,
     "bigInt"               : false,
+    "moment"               : false,
     "browser"              : false,
     "repeater"             : false,
     "element"              : false,

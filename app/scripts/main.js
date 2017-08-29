@@ -20,10 +20,10 @@
 
 
       if (new Date() > new Date(2017,8,2,2)) {
-        vm.selectedDay = '9/3/2016';
+        vm.selectedDay = '9/3/2017';
       }
       else if (new Date() > new Date(2017,8,1,2)) {
-        vm.selectedDay = '9/2/2016';
+        vm.selectedDay = '9/2/2017';
       }
 
       if (new Date() > new Date(2017,8,4)) {
@@ -66,7 +66,7 @@
         {Id: 23, Event: 'Tajci', Where:'Main Stage', StartTime:new Date(2017,8,3,11,0), Endtime: new Date(2017,8,3,12,0)},
         {Id: 24, Event: 'Fireside Collective', Where:'Main Stage', StartTime:new Date(2017,8,3,13,0), Endtime: new Date(2017,8,3,14,15)},
         {Id: 25, Event: 'Gothard Sisters', Where:'Main Stage', StartTime:new Date(2017,8,3,15,0), Endtime: new Date(2017,8,3,16,0)},
-        {Id: 26, Event: 'Frank Solivan', Where:'Main Stage', StartTime:new Date(2017,8,3,16,30), Endtime: new Date(2017,8,3,17,45)},
+        {Id: 26, Event: 'Frank Solivan & Dirty Kitchen', Where:'Main Stage', StartTime:new Date(2017,8,3,16,30), Endtime: new Date(2017,8,3,17,45)},
         {Id: 27, Event: 'Scythian', Where:'Main Stage', StartTime:new Date(2017,8,3,19,0), Endtime: new Date(2017,8,3,20,30)},
         {Id: 28, Event: 'Eddie From Ohio', Where:'Main Stage', StartTime:new Date(2017,8,3,21,45), Endtime: new Date(2017,8,3,23,0)},
 
@@ -80,7 +80,7 @@
         {Id: 35, Event: 'Gothard Sisters', Where:'Kids Stage', StartTime:new Date(2017,8,3,12,45), Endtime: new Date(2017,8,3,13,30)},
         {Id: 36, Event: 'Cake For Dinner', Where:'Kids Stage', StartTime:new Date(2017,8,3,15,45), Endtime: new Date(2017,8,3,16,30)},
 
-        {Id: 37, Event: 'Frank Solivan', Where:'Workshop Zone', StartTime:new Date(2017,8,3,13,45), Endtime: new Date(2017,8,3,14,30)},
+        {Id: 37, Event: 'Frank Solivan & Dirty Kitchen', Where:'Workshop Zone', StartTime:new Date(2017,8,3,13,45), Endtime: new Date(2017,8,3,14,30)},
         {Id: 38, Event: 'Banjo Workshop', Where:'Workshop Zone', StartTime:new Date(2017,8,3,14,45), Endtime: new Date(2017,8,3,15,30)},
         {Id: 39, Event: 'Cajun Cooking & Music Revival', Where:'Workshop Zone', StartTime:new Date(2017,8,3,16,45), Endtime: new Date(2017,8,3,17,30)}
 
@@ -253,6 +253,12 @@
             'text': 'You\'re viewing a schedule that someone else shared with you. Probably because they\'re awesome and you\'re awesome. If you want to see all the events, change "Shared With Me" to "All Scheduled" to customize and share your own schedule!',
             'confirmButtonText': 'Awesome!'
           });
+
+          var firstEventDay = vm.allEvents.filter(function(x){return x.SharedEvent;}).sort(function(x,y){
+            return x.StartTime - y.StartTime;
+          })[0].StartTime.setHours(0,0,0,0);
+
+          vm.selectedDay = moment(firstEventDay).format('M/D/YYYY');
         }
       }
 
